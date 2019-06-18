@@ -4,7 +4,6 @@
             ))
 
 
-(def click-count (r/atom 0))
 
 (defn Canvas []
   (let [s (r/atom {})]
@@ -12,14 +11,14 @@
      {:component-did-mount
       (fn []
         :display-name "the-canvas-component"
-        (def canvas-dom (.getElementById js/document "background"))
-        (def monet-canvas (canvas/init canvas-dom "2d"))
-        (canvas/add-entity monet-canvas :background
-                           (canvas/entity {:x 0 :y 0 :w 600 :h 600} ; val
+        (swap! s assoc :canvas-dom (.getElementById js/document "background"))
+        (swap! s assoc :monet-canvas (canvas/init (:canvas-dom @s) "2d")) ; this is the ctx
+        (canvas/add-entity (:monet-canvas @s) :background
+                           (canvas/entity {:x 0 :y 0 :w 600 :h 400} ; val
                                           nil                       ; update function
                                           (fn [ctx val]             ; draw function
                                             (-> ctx
-                                                (canvas/fill-style "#09f123")
+                                                (canvas/fill-style "#dddddd") ; "#09f123"
                                                 (canvas/fill-rect val))))))
 
       :reagent-render
