@@ -1,6 +1,6 @@
 (ns merantix-test.core
   (:require
-   [merantix-test.drawing :as draw]
+   [merantix-test.draw :as draw]
    [reagent.core :as reagent :refer [atom]]
    [reagent.session :as session]
    [reitit.frontend :as reitit]
@@ -12,55 +12,21 @@
 
 (def router
   (reitit/router
-   [["/" :index]
-    ["/items"
-     ["" :items]
-     ["/:item-id" :item]]
-    ["/about" :about]]))
+   [["/" :index]]))
 
 (defn path-for [route & [params]]
   (if params
     (:path (reitit/match-by-name router route params))
     (:path (reitit/match-by-name router route))))
 
-(path-for :about)
 ;; -------------------------
 ;; Page components
 
 (defn home-page []
   (fn []
     [:span.main
-     [:h1 "Welcome to merantix-test"]
-     [:ul
-      [:li [:a {:href (path-for :items)} "Items of merantix-test"]]
-      [:li [:a {:href "/broken/link"} "Broken link"]]]]))
-
-
-
-(defn items-page []
-  (fn []
-    [:span.main
-     [:h1 "The items of merantix-test"]
-     [:ul (map (fn [item-id]
-                 [:li {:name (str "item-" item-id) :key (str "item-" item-id)}
-                  [:a {:href (path-for :item {:item-id item-id})} "Item: " item-id]])
-               (range 1 60))]]))
-
-
-(defn item-page []
-  (fn []
-    (let [routing-data (session/get :route)
-          item (get-in routing-data [:route-params :item-id])]
-      [:span.main
-       [:h1 (str "Item " item " of merantix-test")]
-       [:p [:a {:href (path-for :items)} "Back to the list of items"]]])))
-
-
-
-(defn about-page []
-  (fn [] [:span.main
-          [draw/Canvas]]))
-
+     [draw/Canvas]
+     ]))
 
 
 ;; -------------------------
@@ -69,9 +35,7 @@
 (defn page-for [route]
   (case route
     :index #'home-page
-    :about #'about-page
-    :items #'items-page
-    :item #'item-page))
+    ))
 
 
 ;; -------------------------
@@ -82,8 +46,9 @@
     (let [page (:current-page (session/get :route))]
       [:div
        [:header
-        [:p [:a {:href (path-for :index)} "Home"] " | "
-         [:a {:href (path-for :about)} "Drawing thing"]]]
+        [:p
+         [:a {:href (path-for :index)} "Home"] " | Welcome to drawing thing!"
+         ]]
        [page]
        ])))
 
@@ -91,7 +56,9 @@
 ;; Initialize app
 
 (defn mount-root []
-  (reagent/render [current-page] (.getElementById js/document "app")))
+  (reagent/render [current-page] (.getElementById js/document "app"))
+  ; This keeps track of window resize to dynamically adjust canvas.
+  (.addEventListener js/window "resize" draw/on-window-resize))
 
 (defn init! []
   (clerk/initialize!)

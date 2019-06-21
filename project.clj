@@ -1,5 +1,5 @@
 (defproject merantix-test "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "A small demo of the canvas html5 element."
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -16,7 +16,6 @@
                   :scope "provided"]
                  [metosin/reitit "0.3.7"]
                  [pez/clerk "1.0.0"]
-                 [rm-hull/monet "0.3.0"]
                  [venantius/accountant "0.2.4"
                   :exclusions [org.clojure/tools.reader]]]
 
@@ -90,7 +89,6 @@
                                   [figwheel-sidecar "0.5.18"]
                                   [nrepl "0.6.0"]
                                   [pjstadig/humane-test-output "0.9.0"]
-                                  
  ]
 
                    :source-paths ["env/dev/clj"]
